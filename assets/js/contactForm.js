@@ -19,7 +19,8 @@ function sendMail() {
     }
   
     let emailReceiver = "muhamadmufidbachri27@gmail.com";
-  
+    console.log(`Name : ${inputName}\nEmail: ${inputEmail}\nPhone: ${inputNumber}\nSubject: ${subject}\nMessage: ${message}`)
+
     let a = document.createElement("a");
     a.href = `mailto:${emailReceiver}?subject=${subject}&body=Halo, nama saya, ${inputName} ${message}. Silahkan kirimkan pesan saya di nomor ${inputNumber}`;
     a.click();
