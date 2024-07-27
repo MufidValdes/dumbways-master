@@ -52,7 +52,7 @@
   margin-bottom: 20px;
 }
 
-.author {
+.author , .rate{
   font-weight: bold;
   text-align: right;
 }
