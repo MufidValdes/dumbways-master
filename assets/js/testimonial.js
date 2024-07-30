@@ -31,73 +31,70 @@
 
 // document.getElementById("testimonials").innerHTML = testimonialsHTML
 
-const testimonialData = [
-    {
-        image:"https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8b34d29c-0458-4047-a924-c8c75109d1b4/width=960,quality=90/00768-111161737.jpeg",
-        review:"lorem ipsum",
-        name:"Dono",
-        rate: 5,
-    },
-    {
-        image:"https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8b34d29c-0458-4047-a924-c8c75109d1b4/width=960,quality=90/00768-111161737.jpeg",
-        review:"lorem ipsum",
-        name:"kasino",
-        rate: 5,
-    },
-    {
-        image:"https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8b34d29c-0458-4047-a924-c8c75109d1b4/width=960,quality=90/00768-111161737.jpeg",
-        review:"lorem ipsum",
-        name:"indro",
-        rate: 5,
-    },
-    {
-        image:"https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8b34d29c-0458-4047-a924-c8c75109d1b4/width=960,quality=90/00768-111161737.jpeg",
-        review:"lorem ipsum",
-        name:"Dono",
-        rate: 2,
-    },
-    {
-        image:"https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/8b34d29c-0458-4047-a924-c8c75109d1b4/width=960,quality=90/00768-111161737.jpeg",
-        review:"lorem ipsum",
-        name:"Dono",
-        rate: 1,
-    },
-    
-]
+function fetchUrl(url) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+  
+      xhr.open("GET", url, true);
+  
+      xhr.onerror = () => {
+        reject("Network error!");
+      };
+  
+      xhr.onload = () => {
+        resolve(JSON.parse(xhr.responseText));
+      };
+  
+      xhr.send();
+    });
+  }
 
-function html(item) {
-    return `
-    <div class="testimonial">
-        <img src="${item.image}" class="profile-testimonial" />
-        <p class="quote">"${item.review}"</p>
-        <p class="author">- ${item.name}</p>
-        <p class="rate"> ${item.rate}<i class="fa-solid fa-star"></i></p>
-    </div>
-    `
+
+
+async function allTestimonials() {
+    try {
+        const testimonials = await fetchUrl(
+          "https://api.npoint.io/5e4f6cc86a578e6633e7"
+        );
+
+        const testimonialsHTML = testimonials.map((testimonial) => {
+            return `<div class="testimonial">
+            <img src="${testimonial.image}" class="profile-testimonial" />
+            <p class="quote">"${testimonial.review}"</p>
+            <p class="author">- ${testimonial.name}</p>
+            <p class="rate"> ${testimonial.rate}<i class="fa-solid fa-star"></i></p>
+        </div> `
+        });
+        document.getElementById("testimonials").innerHTML = testimonialsHTML.join(" ")
+} catch(error) {
+    alert(error);
 }
-
-function allTestimonials(rate) {
-    let testimonialsHTML = ``
-    testimonialData.forEach((item) => {
-        testimonialsHTML += html(item)
-    })
-    document.getElementById("testimonials").innerHTML = testimonialsHTML
 }
 
 allTestimonials()
 
-function filterTestimonials(rate) {
-    let testimonialsHTML = ``
-    const testimonialfilter = testimonialData.filter((item) =>{
-        return item.rate === rate
-    })
+async function filterTestimonials(rate) {
+    try {
+        const testimonials = await fetchUrl(
+          "https://api.npoint.io/5e4f6cc86a578e6633e7"
+        );
 
-    if (testimonialfilter.length === 0){
-        testimonialsHTML = `<h3> Data tidak ada</h3>`
-    } else {
-        testimonialfilter.forEach((item) =>{
-            testimonialsHTML += html(item)
-        })
-    }
-    document.getElementById("testimonials").innerHTML = testimonialsHTML
+        const testimonialfilter = testimonials.filter((testimonial) =>{
+        return testimonial.rate === rate
+        });
+
+        const testimonialsHTML = testimonialfilter.map((testimonial) => {
+            return `<div class="testimonial">
+            <img src="${testimonial.image}" class="profile-testimonial" />
+            <p class="quote">"${testimonial.review}"</p>
+            <p class="author">- ${testimonial.name}</p>
+            <p class="rate"> ${testimonial.rate}<i class="fa-solid fa-star"></i></p>
+        </div> `
+        });
+
+       
+    document.getElementById("testimonials").innerHTML = testimonialsHTML.join(" ")
+} catch(error) {
+    alert(error)
+}
 }
