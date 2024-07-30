@@ -41,7 +41,7 @@ function fetchUrl(url) {
         reject("Network error!");
       };
   
-      xhr.onload = () => {
+      xhr.onload = () => { 
         resolve(JSON.parse(xhr.responseText));
       };
   
