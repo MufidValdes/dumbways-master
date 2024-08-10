@@ -50,3 +50,42 @@ VAR => BISA DI DEKLARASI ULANG
 result
 hello
 
+// const data = {
+//     nama: inputName,
+//     email: inputEmail,
+//     phone: inputPhone,
+//     subject: inputSubject,
+//     message: inputMessage
+// }
+
+// console.log([data, data, data])
+
+// 1 == "1" -> true
+// 1 === "1" -> false
+
+// CONDITION (IF ELSE | SWITCH CASE) |  CHALLENGE : bikin rentang dari nilai
+// const nilai = 75
+// if (nilai > 80) {
+//     console.log("Nilai B")
+// } else if (nilai < 20) {
+//     console.log("Nilai Z")
+// } else if (nilai < 50) {
+//     console.log("Nilai X")
+// } else {
+//     console.log("Nilai tidak ada")
+// }
+
+// LOOPING : FOR, WHILE, DO-WHILE
+// FOR -> perulangan yang kamu sudah tau kapan harus berhenti
+// for(let index = 0; index < 10; index++) { 
+//     console.log("ini adalah index", index)
+// }
+
+// WHILE -> perulangan yang belum tentu kamu tau kapan harus berhenti (berdasarkan data dinamis)
+
+// DO WHILE -> perulangan yang jalan dulu sekali, baru dicek
+
+// Math :
+// floor -> dibulatkan ke bawah, ex : 8.6 -> 8
+// round -> dibulatkan angka terdekat, ex : 8.3 -> 8
+// ceil -> dibulatkan ke atas, ex : 8.3 -> 9
