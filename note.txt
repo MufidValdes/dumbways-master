@@ -1,0 +1,52 @@
+Tipe Data
+=> 
+--String -> " Hallo Friend"
+
+//Number
+--Integer -> 1234
+--float -> 123,5
+
+Array => ["cat","dog",123]
+object => {
+    nama : "blackcat",
+    jenis : "garong"
+}
+
+array of object -> [
+    {
+        nama : "blackcat",
+        jenis : "garong"
+    },
+    {
+        nama : "blackcat",
+        jenis : "garong"
+    },
+    dst..
+]
+
+DEKLARASI =>
+Let, Const, Var ??
+
+LET => TIDAK BISA DI DEKLARASI ULANG
+-- Let name = "Hello World"
+-- let name = "helo"
+-- console.log(name) 
+result 
+   The symbol "name" has already been declared
+   
+CONST => TIDAK BISA DI DEKLARASI ULANG, tidak bisa di inisialisasi ulang
+-- Let name = "Hello World"
+-- name = "helo"
+-- console.log(name) 
+result 
+   The symbol "name" has already been declared
+
+   Cannot assign to "name" because it is a constant
+
+VAR => BISA DI DEKLARASI ULANG
+-- var name = "Hello World"
+-- var name = "hello, "
+-- console.log(name)
+result
+hello
+
