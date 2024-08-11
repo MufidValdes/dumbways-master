@@ -146,7 +146,7 @@
                         {{this.title}}
                       </a>
                     </h2>
-                    <p class="card-text mb-4" id="totalMonth">durasi : 3 bulan</p>
+                    <p class="card-text mb-4" id="totalMonth">{{startDate}} | {{endDate}}</p>
                     <blockquote class="blockquote mb-2">
                       <p
                         class="text-break fst-italic text-align-justify text-lowercase"
@@ -158,12 +158,12 @@
                       <i class="${dataProject[i].checkNode}"></i>
                     </div>
                     <div class="d-flex justify-content-between gap-2">
-                      <a class="col-6" href="#">
+                      <a class="col-6" href="/update_project/{{@index}}">
                         <button class="btn btn-primary">
                           edit
                         </button>
                       </a>
-                      <form class="col-6">
+                      <form class="col-6" action="/delete_project/{{@index}}" method="post">
                         <button class="btn btn-danger">delete</button>
                       </form>
                     </div>
