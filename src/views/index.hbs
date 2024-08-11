@@ -49,14 +49,24 @@
               <li class="nav-item">
                 <a class="nav-link" href="./testimonial">My Testimonial</a>
               </li>
+              {{#if isLogin}}
+                <li class="nav-item">
+                  <a class="nav-link fw-bold active text-danger">Hello,
+                    {{user}}</a>
+                </li>
+                <form action="/logout" method="POST">
+                <button>Logout</button>
+              </form>
+              {{else}}
+                <li class="nav-item">
+                  <a class="nav-link" href="/register">Register</a>
+                </li>
+                <li class="nav-item ms-3">
+                  <a class="nav-link" href="/login">Login</a>
+                </li>
+              {{/if}}
               <li class="nav-item">
                 <a class="nav-link" href="./contact">Contact Me</a>
-              </li>
-              <li class="nav-item ms-auto">
-                <a class="text-decoration-none text-white" href="./login">
-                  Login
-                </a>
-
               </li>
             </ul>
           </div>
