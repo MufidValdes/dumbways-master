@@ -28,6 +28,10 @@ app.use(express.json());
 
 
 // ========== Route ==========
+// get = mengambil data
+// post = mengirimkan data
+// request = dari client ke server
+// respose = dari server ke client
 app.get('/', home)
 app.get('/contact', contact)
 
@@ -38,12 +42,12 @@ app.post('/delete_project/:id', del_project)
 app.get('/update_project/:id', update_projectView)
 app.post('/update_project', update_project)
 
-app.get('/detail_project/:project_id', detail_projectbyId)
+app.get('/detail_project/:id', detail_projectbyId)
 app.get('/detail_project', detail_project)
 
 app.get('/testimonial', testimonial)
 
-
+// ========== SET Function ==========
 async function home(req, res) {
     const query = "SELECT * FROM tb_projects ORDER BY id ASC ";
     const result = await sequelize.query(query, { type: QueryTypes.SELECT });
@@ -55,82 +59,111 @@ async function home(req, res) {
 function contact(req, res) {
     res.render('contact')
 }
-
+// ========== CRUD MyProject ==========
 function project(req, res) {
     res.render('add_project')
 }
-function add_project(req, res) {
-    console.log(req.body)
-    const {title, startDate, endDate, discription} = req.body
-
-    // const data_Project = {
-    //     title: req.body.title,
-    // }
-    const data_Project = {
-        title, 
+// ==> ADD PROJECT <===
+async function add_project(req, res) {
+    const user_id = 12
+    const image = "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001"    
+    const {
+        id, 
+        name, 
         startDate, 
         endDate, 
-        image, 
         discription
-    }
-    const image = "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001"
+    } = req.body 
     
-    data.unshift(data_Project);
+    const query = `
+    INSERT INTO tb_projects(
+        name, 
+        start_date, 
+        end_date, 
+        description, 
+        tecnologies, 
+        image,
+        "user_id",
+        duration_time, 
+        "createdAt", 
+        "updatedAt"
+        ) 
+        VALUES (
+        '${name}',
+        '${startDate}',
+        '${endDate}',
+        '${discription}',
+        ARRAY['${req.body.Technologies1}','${req.body.Technologies2}','${req.body.Technologies3}','${req.body.Technologies4}'],
+        '${image}',
+        '${user_id}',
+        '',
+        NOW(), NOW())`;
     
+    const result = await sequelize.query(query, { type: QueryTypes.INSERT });
+
+    console.log("Data berhasil ditambahkan :", result);
     res.redirect('/')
 }
 
-function del_project(req, res) {
+async function del_project(req, res) {
     const { id } = req.params
     
-    data.splice(id, 1)
-    // const dataproject = data.find( index => index.id == id );
-    res.redirect('/')
+    const query = `
+    DELETE FROM tb_projects 
+    WHERE id=${id}`;
+    const result = await sequelize.query(query, { type: QueryTypes.DELETE });
+    
+    console.log("data berhasil dihapus :", result[0]);
+    res.redirect("/");
 }
 
-function update_projectView(req, res) {
-    const { id } = req.params
-    
-    const dataFilter = data[parseInt(id)]
-    dataFilter.id = parseInt(id)
-    
-    res.render('update_project', { data: dataFilter })
-}
-function update_project(req, res) {
-    const {id, title, startDate, endDate, discription} = req.body
-    
-    console.log(req.body)
+async function update_projectView(req, res) {
+    const { id } = req.params;
+    const query = `SELECT * FROM tb_projects WHERE id=${id}`;
+    const project = await sequelize.query(query, { type: QueryTypes.SELECT });
 
-    const image = "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001"
-    // const newData ={
-    //  ...data?
-    // }
-    // const index = data.find( project_id => project_id.id == id );
-    //  data[index] = newData;
-    data[parseInt(id)] = {
-        title, 
+    console.log("ini update project", project);
+    
+    res.render('update_project', {data: project[0]})
+}
+async function update_project(req, res) {
+    const image = "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001"    
+    const {
+        id,
+        name, 
         startDate, 
         endDate, 
-        image, 
         discription
-    }
+    } = req.body 
+
+    const query = `
+        UPDATE tb_projects
+        SET  name = '${name}' ,
+        start_date = '${startDate}', 
+        end_date = '${endDate}', 
+        description = '${discription}',
+        tecnologies= ' ARRAY['${req.body.Technologies1}','${req.body.Technologies2}','${req.body.Technologies3}','${req.body.Technologies4}']', 
+        image = '${image}'
+        WHERE
+        id=${id}`;
+        const result = await sequelize.query(query, { type: QueryTypes.UPDATE });
+
+        console.log("data berhasil diperbarui", result)
     
-    res.redirect('/')
+        res.redirect('/')
 }
 
 function detail_project(req, res) {
     res.redirect('/')
 }
 
-function detail_projectbyId(req, res) {
-    const { id } = req.params.project_id
+async function detail_projectbyId(req, res) {
+    const { id } = req.params;
 
-    // const dataproject = data[parseInt(id)]
-    // dataproject.id = parseInt(id)
+    const query = `SELECT * FROM tb_projects WHERE id=${id}`;
+    const result = await sequelize.query(query, { type: QueryTypes.SELECT });
 
-    const dataproject = data.find( project_id => project_id.id == id );
-
-    res.render('detail_project', { data: dataproject })
+    res.render('detail_project', { data: result[0] })
 }
 function testimonial(req, res) {
     res.render('testimonial')

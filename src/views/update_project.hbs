@@ -81,7 +81,7 @@
                 id="input-project-name"
                 type="text"
                 name="title"
-                value="{{data.title}}"
+                value="{{data.name}}"
                 placeholder="Input your name"
               />
             </div>
@@ -93,6 +93,7 @@
                   type="date" 
                   id="startDate"
                   name="startDate"
+                  value="{{data.startDate}}"
                 />
               </div>
               <div class="col">
@@ -101,6 +102,7 @@
                   class="form-control" 
                   type="date" 
                   id="endDate" 
+                  value="{{data.endDate}}"
                   name="endDate"
                 />
               </div>
@@ -111,7 +113,7 @@
                 class="form-control" 
                 id="input-project-desc"
                 name="content"
-                placeholder="{{data.content}}"
+                placeholder="{{data.discription}}"
                 ></textarea>
             </div>
             <div class="mb-2">
@@ -169,6 +171,7 @@
                   type="file"
                   id="input-uploadImage"
                   aria-label="upload"
+                  value="{{data.image}}"
                   name="image"
                   hidden
                 />

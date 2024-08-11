@@ -142,8 +142,8 @@
                       style="object-fit: cover; height:450px ; width:300px"
                     />
                     <h2 class="card-title fw-semibold">
-                      <a style="text-decoration: none;color:black" href="/detail_project/{{@index}}" target="_blank">
-                        {{this.title}}
+                      <a style="text-decoration: none;color:black" href="/detail_project/{{this.id}}" target="_blank">
+                        {{this.name}}
                       </a>
                     </h2>
                     <p class="card-text mb-4" id="totalMonth">{{startDate}} | {{endDate}}</p>
@@ -158,12 +158,12 @@
                       <i class="${dataProject[i].checkNode}"></i>
                     </div>
                     <div class="d-flex justify-content-between gap-2">
-                      <a class="col-6" href="/update_project/{{@index}}">
+                      <a class="col-6" href="/update_project/{{this.id}}">
                         <button class="btn btn-primary">
                           edit
                         </button>
                       </a>
-                      <form class="col-6" action="/delete_project/{{@index}}" method="post">
+                      <form class="col-6" action="/delete_project/{{this.id}}" method="post">
                         <button class="btn btn-danger">delete</button>
                       </form>
                     </div>
