@@ -70,7 +70,7 @@
           <form
             class="mx-auto"
             style="max-width: 500px;"
-            onsubmit="addProject(event)"
+             method="post" action="/add_project"
           >
             <h1 class="text-center mb-2">Add My Project</h1>
             <div class="mb-2">
@@ -79,28 +79,37 @@
                 class="form-control"
                 id="input-project-name"
                 type="text"
-                required
+                name="title"
                 placeholder="Input your name"
               />
             </div>
             <div class="mb-2 d-flex justify-content-between gap-4">
               <div class="col">
                 <label for="startDate">Start Date</label>
-                <input
-                  class="form-control"
-                  type="date"
+                <input 
+                  class="form-control" 
+                  type="date" 
                   id="startDate"
-                  required
+                  name="startDate"
                 />
               </div>
               <div class="col">
                 <label for="endDate">End Date</label>
-                <input class="form-control" type="date" id="endDate" required />
+                <input 
+                  class="form-control" 
+                  type="date" 
+                  id="endDate" 
+                  name="endDate"
+                />
               </div>
             </div>
             <div class="mb-2">
               <label for="input-project-desc">Description</label>
-              <textarea class="form-control" id="input-project-desc"></textarea>
+              <textarea 
+                class="form-control" 
+                id="input-project-desc"
+                name="content"
+                ></textarea>
             </div>
             <div class="mb-2">
               <label>Technologies</label>
@@ -110,6 +119,7 @@
                     class="form-check-input"
                     type="checkbox"
                     id="checkNode"
+                    name="node"
                   />
                   <label class="form-check-label" for="checkNode">NodeJS</label>
                 </div>
@@ -118,6 +128,7 @@
                     class="form-check-input"
                     type="checkbox"
                     id="checkReact"
+                    name="react"
                   />
                   <label
                     class="form-check-label"
@@ -129,6 +140,7 @@
                     class="form-check-input"
                     type="checkbox"
                     id="checkNext"
+                    name="next"
                   />
                   <label class="form-check-label" for="checkNext">NextJs</label>
                 </div>
@@ -137,6 +149,7 @@
                     class="form-check-input"
                     type="checkbox"
                     id="checkTypescript"
+                    name="typescript"
                   />
                   <label
                     class="form-check-label"
@@ -153,6 +166,8 @@
                   type="file"
                   id="input-uploadImage"
                   aria-label="upload"
+                  name="images"
+                  hidden
                 />
                 <span class="input-group-text">
                   <i class="fa-solid fa-paperclip"></i>

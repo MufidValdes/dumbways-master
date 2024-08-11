@@ -17,7 +17,7 @@
       crossorigin="anonymous"
     />
     <style>
-      .container-detail img { max-width: 100%; height: auto; border-radius: 5px;
+      .container-detail img { max-width: 100%; height:fit-content; border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); } .technologies p {
       margin-bottom: 0.5rem; } .title { font-size: 2.5rem; font-weight: bold; }
     </style>
@@ -70,14 +70,13 @@
     <!-- Main -->
     <main class="container mt-5">
       <div class="title text-center mb-4">
-        Dumbways Web App
+        <h1>{{data.id}} | {{data.title}}</h1>
       </div>
-      <div class="container-detail d-flex flex-column">
-        <div class="container-content card mb-4 p-4">
-          <div class="Image mb-4">
-            <img src="./assets/images/picture.jpg" alt="Image-detail" />
+      <div class="container-detail  d-flex">
+          <div class="col-6 p-2 m-auto">
+            <img style="object-fit: cover;" src="{{data.image}}" alt="Image-detail"  />
           </div>
-          <div class="image-detail mb-4">
+          <div class="col-6 image-detail mb-4">
             <div class="duration mb-4">
               <h5 class="duration-title">Duration</h5>
               <p class="duration-date">
@@ -109,8 +108,9 @@
                   </p>
                   <p class="d-flex align-items-center">
                     <img
-                      src="./assets/images/socket.png"
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Socket-io.svg/800px-Socket-io.svg.png"
                       alt="logo-socket"
+                      style="width: 24px; margin-right: 5px;"
                       width="20"
                       height="20"
                       class="me-2"
@@ -121,31 +121,14 @@
               </div>
             </div>
           </div>
-        </div>
+      </div>
         <div class="content card p-4">
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo autem
-            ad numquam ipsa, quisquam eius repudiandae reiciendis neque odit
-            commodi nobis perferendis quis voluptates sed consequuntur, qui
-            ducimus similique rerum. Lorem ipsum dolor sit amet consectetur
-            adipisicing elit. Eum quod rem dolore, tenetur minima aperiam
-            distinctio eaque in. Inventore repudiandae blanditiis cum quaerat
-            nihil assumenda ipsum distinctio culpa placeat animi.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae
-            sapiente doloremque dicta dignissimos itaque tenetur vel error
-            blanditiis accusamus libero autem officia veniam qui fuga cum ex
-            vitae, perferendis deserunt.
-          </p>
-          <p>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quam
-            facilis sapiente aliquid quos quisquam veritatis nemo, dolorem
-            corporis expedita repellendus natus ratione vitae molestias
-            perferendis, inventore nisi placeat ab! Dignissimos.
+            {{data.description}}
           </p>
         </div>
-      </div>
+
+
     </main>
 
     <!-- Footer -->
