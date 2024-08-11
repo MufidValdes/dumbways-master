@@ -1,12 +1,21 @@
 // ========== set global variable ==========
+//Import library/module
 const express = require('express')
 const path = require('path')
 const app = express()
 const port = 3000
 
 // app.set = setting variable global, configuration, dll
+// use handlebars for template engine
 app.set("view engine", "hbs")
 app.set("views", "src/views");
+
+
+// sequelize config
+const config = require("./config/config.json");
+// ORM (Object Relational Mapping), Teknik penyelarasan antara aplikasi dan database ataupun jembatan, penyederhanaan. pemetaan object ke struktur database
+const { Sequelize, QueryTypes } = require("sequelize");
+const sequelize = new Sequelize(config.development);
 
 // app.use = setting middleware
 app.use("/assets",express.static(path.join(__dirname, 'src/assets')))
@@ -35,24 +44,12 @@ app.get('/detail_project', detail_project)
 app.get('/testimonial', testimonial)
 
 
-const data = []
-// {
-//     title: "Title 1",
-//     image : "https://cdna.artstation.com/p/assets/images/images/078/736/216/4k/eduardo-pena-michis-forest-ep.jpg?1722949590",
-//     description: "description 1"
-// },
-// {
-//     title: "Title 2",
-//     image : "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001",
-//     description: "description 2"
-// },
-// {
-//     title: "Title 3",
-//     image : "https://cdna.artstation.com/p/assets/images/images/077/851/190/small/smile-_z-383840271-723901673110426-2912462321000718505-n.jpg?1720532569",
-//     description: "description 3"
-// }
-function home(req, res) {
-    res.render('index', {data})
+async function home(req, res) {
+    const query = "SELECT * FROM tb_projects ORDER BY id ASC ";
+    const result = await sequelize.query(query, { type: QueryTypes.SELECT });
+    
+    console.log("ini data dari tb_projects :", result);
+    res.render('index', {data : result})
 }
 
 function contact(req, res) {
@@ -64,12 +61,20 @@ function project(req, res) {
 }
 function add_project(req, res) {
     console.log(req.body)
-
     const {title, startDate, endDate, discription} = req.body
 
+    // const data_Project = {
+    //     title: req.body.title,
+    // }
+    const data_Project = {
+        title, 
+        startDate, 
+        endDate, 
+        image, 
+        discription
+    }
     const image = "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001"
     
-    const data_Project = {title, startDate, endDate, image, discription}
     data.unshift(data_Project);
     
     res.redirect('/')
@@ -93,11 +98,15 @@ function update_projectView(req, res) {
 }
 function update_project(req, res) {
     const {id, title, startDate, endDate, discription} = req.body
+    
     console.log(req.body)
-    
-    
+
     const image = "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001"
-    
+    // const newData ={
+    //  ...data?
+    // }
+    // const index = data.find( project_id => project_id.id == id );
+    //  data[index] = newData;
     data[parseInt(id)] = {
         title, 
         startDate, 
