@@ -49,14 +49,24 @@
               <li class="nav-item">
                 <a class="nav-link" href="./testimonial">My Testimonial</a>
               </li>
+              {{#if isLogin}}
+                <li class="nav-item">
+                  <a class="nav-link fw-bold active text-danger">Hello,
+                    {{user}}</a>
+                </li>
+                <form action="/logout" method="POST">
+                <button>Logout</button>
+              </form>
+              {{else}}
+                <li class="nav-item">
+                  <a class="nav-link" href="/register">Register</a>
+                </li>
+                <li class="nav-item ms-3">
+                  <a class="nav-link" href="/login">Login</a>
+                </li>
+              {{/if}}
               <li class="nav-item">
                 <a class="nav-link" href="./contact">Contact Me</a>
-              </li>
-              <li class="nav-item ms-auto">
-                <a class="text-decoration-none text-white" href="./login">
-                  Login
-                </a>
-
               </li>
             </ul>
           </div>
@@ -142,11 +152,11 @@
                       style="object-fit: cover; height:450px ; width:300px"
                     />
                     <h2 class="card-title fw-semibold">
-                      <a style="text-decoration: none;color:black" href="/detail_project/{{@index}}" target="_blank">
-                        {{this.title}}
+                      <a style="text-decoration: none;color:black" href="/detail_project/{{this.id}}" target="_blank">
+                        {{this.name}}
                       </a>
                     </h2>
-                    <p class="card-text mb-4" id="totalMonth">durasi : 3 bulan</p>
+                    <p class="card-text mb-4" id="totalMonth">{{startDate}} | {{endDate}}</p>
                     <blockquote class="blockquote mb-2">
                       <p
                         class="text-break fst-italic text-align-justify text-lowercase"
@@ -158,12 +168,12 @@
                       <i class="${dataProject[i].checkNode}"></i>
                     </div>
                     <div class="d-flex justify-content-between gap-2">
-                      <a class="col-6" href="#">
+                      <a class="col-6" href="/update_project/{{this.id}}">
                         <button class="btn btn-primary">
                           edit
                         </button>
                       </a>
-                      <form class="col-6">
+                      <form class="col-6" action="/delete_project/{{this.id}}" method="post">
                         <button class="btn btn-danger">delete</button>
                       </form>
                     </div>
