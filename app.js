@@ -197,7 +197,7 @@ async function add_project(req, res) {
       Technologies4,
     } = req.body;
     const durationTime = getDurationTime(endDate, startDate);
-    
+     
     const tecnologies = [
       Technologies1,
       Technologies2,

@@ -50,11 +50,11 @@
             <ul class="navbar-nav w-100 mb-2 mt-2 mb-lg-0">
               {{#if isLogin}}
               <li class="nav-item">
-                <a class="nav-link" href="./add_project">Add Project</a>
+                <a class="nav-link" href="../add_project">Add Project</a>
               </li>
               {{/if}}
               <li class="nav-item">
-                <a class="nav-link" href="./testimonial">My Testimonial</a>
+                <a class="nav-link" href="../testimonial">My Testimonial</a>
               </li>
               {{#if isLogin}}
               <li class="nav-item">
@@ -66,14 +66,14 @@
               </form>
               {{else}}
               <li class="nav-item">
-                <a class="nav-link" href="/register">Register</a>
+                <a class="nav-link" href="../register">Register</a>
               </li>
               <li class="nav-item ms-3">
-                <a class="nav-link" href="/login">Login</a>
+                <a class="nav-link" href="../login">Login</a>
               </li>
               {{/if}}
               <li class="nav-item">
-                <a class="nav-link" href="./contact">Contact Me</a>
+                <a class="nav-link" href="../contact">Contact Me</a>
               </li>
             </ul>
           </div>
@@ -96,7 +96,7 @@
             <h5 class="duration-title">Duration</h5>
             <p class="duration-date">
               <i class="fa-solid fa-calendar-days fa-xl"></i>
-              {{data.startDate}} | {{data.endDate}}
+              {{data.start_date}} | {{data.end_date}}
             </p>
             <p class="duration-time">
               <i class="fa-regular fa-clock fa-xl"></i>
@@ -107,13 +107,13 @@
             <h5 class="technologies-title">Technologies</h5>
             <div class="technologies-content row">
               <div class="technologies-left col-6">
-                {{#each data.technologies}}
+                {{#each data.tecnologies}}
                 <p>
                   <img src="/assets/icon/{{this}}.png" alt="{{this}}" style="width: 24px; margin-right: 5px;" width="20"
                     height="20" class="me-2" />
                   {{this}}
                 </p>
-                {{#each data.technologies}}
+                {{/each}}
                 {{!-- <p>
                   <i class="fa-brands fa-node-js fa-xl"></i>
                   {{data.Technologies2}}
