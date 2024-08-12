@@ -89,3 +89,7 @@ hello
 // floor -> dibulatkan ke bawah, ex : 8.6 -> 8
 // round -> dibulatkan angka terdekat, ex : 8.3 -> 8
 // ceil -> dibulatkan ke atas, ex : 8.3 -> 9
+
+ORM = Object Relation Mapping. Mempermudah melakukan query ke database, Mempermudah melakukan konfigurasi, lebih aman, query yg dijalankan akan dibungkus dengan sebuah method
+DDL, => Database Definition Language. Create Database ? Drop Database ? Create Table ? Alter Table
+DML, => Database Manipulation Language. SELECT, INSERT, UPDATE, DELETE dst.

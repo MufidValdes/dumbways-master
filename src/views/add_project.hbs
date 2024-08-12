@@ -22,7 +22,7 @@
   <body>
     {{! ===<!-- Header -->=== }}
     <header id="header">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
           <a class="navbar-brand" href="/">
             <img
@@ -44,17 +44,32 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav w-100 mb-2 mt-2 mb-lg-0">
+               {{#if isLogin}}
               <li class="nav-item">
                 <a class="nav-link" href="./add_project">Add Project</a>
               </li>
+                {{/if}}
               <li class="nav-item">
                 <a class="nav-link" href="./testimonial">My Testimonial</a>
               </li>
+              {{#if isLogin}}
+                <li class="nav-item">
+                  <a class="nav-link fw-bold active text-danger">Hello,
+                    {{user}}</a>
+                </li>
+                <form action="/logout" method="POST">
+                <button>Logout</button>
+              </form>
+              {{else}}
+                <li class="nav-item">
+                  <a class="nav-link" href="/register">Register</a>
+                </li>
+                <li class="nav-item ms-3">
+                  <a class="nav-link" href="/login">Login</a>
+                </li>
+              {{/if}}
               <li class="nav-item">
                 <a class="nav-link" href="./contact">Contact Me</a>
-              </li>
-              <li class="nav-item ms-auto">
-                <button type="button" class="btn btn-success">Login</button>
               </li>
             </ul>
           </div>
@@ -120,9 +135,9 @@
                     type="checkbox"
                     id="checkNode"
                     name="Technologies1"
-                    value="node"
+                    value="Node Js"
                   />
-                  <label class="form-check-label" for="checkNode">NodeJS</label>
+                  <label class="form-check-label" for="checkNode">Node Js</label>
                 </div>
                 <div class="form-check">
                   <input
@@ -130,12 +145,12 @@
                     type="checkbox"
                     id="checkReact"
                     name="Technologies2"
-                    value="react"
+                    value="React JS"
                   />
                   <label
                     class="form-check-label"
                     for="checkReact"
-                  >ReactJs</label>
+                  >React JS</label>
                 </div>
                 <div class="form-check">
                   <input
@@ -143,9 +158,9 @@
                     type="checkbox"
                     name="Technologies3"
                     id="checkNext"
-                    value="next"
+                    value="Next JS"
                   />
-                  <label class="form-check-label" for="checkNext">NextJs</label>
+                  <label class="form-check-label" for="checkNext">Next JS</label>
                 </div>
                 <div class="form-check">
                   <input
@@ -171,7 +186,7 @@
                   id="input-uploadImage"
                   aria-label="upload"
                   name="image"
-                  hidden
+                  
                 />
                 <span class="input-group-text">
                   <i class="fa-solid fa-paperclip"></i>

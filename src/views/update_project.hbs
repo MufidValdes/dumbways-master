@@ -44,17 +44,32 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav w-100 mb-2 mt-2 mb-lg-0">
+               {{#if isLogin}}
               <li class="nav-item">
                 <a class="nav-link" href="./add_project">Add Project</a>
               </li>
+                {{/if}}
               <li class="nav-item">
                 <a class="nav-link" href="./testimonial">My Testimonial</a>
               </li>
+              {{#if isLogin}}
+                <li class="nav-item">
+                  <a class="nav-link fw-bold active text-danger">Hello,
+                    {{user}}</a>
+                </li>
+                <form action="/logout" method="POST">
+                <button>Logout</button>
+              </form>
+              {{else}}
+                <li class="nav-item">
+                  <a class="nav-link" href="/register">Register</a>
+                </li>
+                <li class="nav-item ms-3">
+                  <a class="nav-link" href="/login">Login</a>
+                </li>
+              {{/if}}
               <li class="nav-item">
                 <a class="nav-link" href="./contact">Contact Me</a>
-              </li>
-              <li class="nav-item ms-auto">
-                <button type="button" class="btn btn-success">Login</button>
               </li>
             </ul>
           </div>
