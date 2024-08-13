@@ -103,7 +103,8 @@ async function home(req, res) {
 }
 
 function contact(req, res) {
-  res.render("contact");
+  const isLogin = req.session.isLogin;
+  res.render("contact",isLogin);
 }
 // ========== Login & Register ==========
 // # AUTHENTICATION => AUTHORIZATION
@@ -159,9 +160,9 @@ async function registerUser(req, res) {
       } else {
          await sequelize.query(`
           INSERT INTO users (name, email, password, "createdAt", "updatedAt")
-          VALUES ('${name}','${email}','${hashedPassword}', NOW() , NOW())`);
+          VALUES ('${name}','${email}','${hashPassword}', NOW() , NOW())`);
           console.log("Hash result :", hashPassword);
-          req.flash("success", "Register success!");
+          // req.flash("success", "Register success!");
           return res.redirect("/");
         }
       });

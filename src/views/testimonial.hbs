@@ -22,9 +22,9 @@
   </head>
   {{! ======== Body ======== }}
   <body>
-    <!-- Header -->
+   {{! ===<!-- Header -->=== }}
     <header id="header">
-     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
           <a class="navbar-brand" href="/">
             <img
@@ -54,26 +54,19 @@
               <li class="nav-item">
                 <a class="nav-link" href="./testimonial">My Testimonial</a>
               </li>
+            </ul>
               {{#if isLogin}}
-                <li class="nav-item">
-                  <a class="nav-link fw-bold active text-danger">Hello,
-                    {{user}}</a>
+                <h3>Halo, {{user}}</h3> 
                 </li>
                 <form action="/logout" method="POST">
                 <button>Logout</button>
               </form>
               {{else}}
-                <li class="nav-item">
-                  <a class="nav-link" href="/register">Register</a>
-                </li>
-                <li class="nav-item ms-3">
-                  <a class="nav-link" href="/login">Login</a>
-                </li>
+                  <a class="nav-link text-secondary " href="/register">Register</a>
+                  <a class="nav-link text-secondary" href="/login">Login</a>
               {{/if}}
-              <li class="nav-item">
-                <a class="nav-link" href="./contact">Contact Me</a>
-              </li>
-            </ul>
+                <a class="btn btn-outline-dark btn-sm" style="height: 34px; width: 120px;" href="./contact" role="button">Contact Me</a>
+
           </div>
 
         </div>

@@ -21,7 +21,7 @@
   <body>
     {{! ===<!-- Header -->=== }}
     <header id="header">
-       <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
           <a class="navbar-brand" href="/">
             <img
@@ -43,34 +43,35 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav w-100 mb-2 mt-2 mb-lg-0">
-               {{#if isLogin}}
-              <li class="nav-item">
-                <a class="nav-link" href="./add_project">Add Project</a>
-              </li>
-                {{/if}}
-              <li class="nav-item">
-                <a class="nav-link" href="./testimonial">My Testimonial</a>
-              </li>
               {{#if isLogin}}
                 <li class="nav-item">
-                  <a class="nav-link fw-bold active text-danger">Hello,
-                    {{user}}</a>
-                </li>
-                <form action="/logout" method="POST">
-                <button>Logout</button>
-              </form>
-              {{else}}
-                <li class="nav-item">
-                  <a class="nav-link" href="/register">Register</a>
-                </li>
-                <li class="nav-item ms-3">
-                  <a class="nav-link" href="/login">Login</a>
+                  <a class="nav-link" href="./add_project">Add Project</a>
                 </li>
               {{/if}}
               <li class="nav-item">
-                <a class="nav-link" href="./contact">Contact Me</a>
+                <a class="nav-link" href="./testimonial">My Testimonial</a>
               </li>
             </ul>
+            {{#if isLogin}}
+              <p
+                class="mt-2 my-2 text-capitalize fst-italic fs-5"
+                style="width: 200px;"
+              >Welcome,<strong>{{user}} </strong> </p>
+              <form class="mx-2 my-2" action="/logout" method="POST">
+                <button
+                  class="btn btn-outline-danger btn-sm btn-lg"
+                >Logout</button>
+              </form>
+            {{else}}
+              <a class="nav-link text-secondary" href="/register">Register</a>
+              <a class="nav-link text-secondary" href="/login">Login</a>
+            {{/if}}
+            <a
+              class="btn btn-outline-dark btn-sm"
+              style="height: 30px; width: 120px;"
+              href="./contact"
+              role="button"
+            >Contact Me</a>
           </div>
 
         </div>
@@ -99,15 +100,23 @@
               <div
                 class="d-flex justify-content-start align-items-center gap-4"
               >
-                <button class="btn btn-primary">Contact</button>
+                <button class="btn btn-dark">Contact</button>
                 <a class="text-decoration-none text-dark" href="#">Download CV
                   <i class="fa-solid fa-download"></i></a>
               </div>
               <div class="mt-5 d-flex justify-content-start gap-4">
-                <a href="#"><i class="fab fa-linkedin fa-2xl"></i></a>
-                <a href="#"><i class="fab fa-instagram fa-2xl"></i></a>
-                <a href="#"><i class="fab fa-facebook fa-2xl"></i></a>
-                <a href="#"><i class="fab fa-twitter fa-2xl"></i></a>
+                <a class="text-dark" href="#"><i
+                    class="fab fa-linkedin fa-2xl"
+                  ></i></a>
+                <a class="text-dark" href="#"><i
+                    class="fab fa-instagram fa-2xl"
+                  ></i></a>
+                <a class="text-dark" href="#"><i
+                    class="fab fa-facebook fa-2xl"
+                  ></i></a>
+                <a class="text-dark" href="#"><i
+                    class="fab fa-twitter fa-2xl"
+                  ></i></a>
               </div>
             </div>
           </div>
@@ -131,62 +140,75 @@
           </div>
         </div>
       </div>
-      <div class="row mt-4 justify-content-center">
-        <div class="col mt-5">
-          <h1 class="text-center mb-3">My Project</h1>
-          <div class="p-4 bg-white">
-            <div
-              class="d-flex flex-wrap align-items-center justify-content-center gap-2"
-              id="contents"
-            >
-              {{! content }}
-              {{#each data}}
-                <div
-                  class="card shadow-sm mb-2 rounded d-flex flex-column justify-content-center"
-                  style="max-width: 350px;"
-                >
-                  <div class="card-body m-2">
-                    <img
-                      class="rounded mb-2"
-                      src="{{this.image}}"
-                      alt=""
-                      width="100%"
-                      style="object-fit: cover; height:450px ; width:300px"
-                    />
-                    <h2 class="card-title fw-semibold">
-                      <a style="text-decoration: none;color:black" href="/detail_project/{{this.id}}" target="_blank">
-                        {{this.name}}
-                      </a>
-                    </h2>
-                    <p class="card-text mb-4" id="totalMonth">{{this.durationTime}}</p>
-                    <blockquote class="blockquote mb-2">
+      {{#if isLogin}}
+        <div class="row mt-4 justify-content-center">
+          <div class="col mt-5">
+            <h1 class="text-center mb-3">My Project</h1>
+            <div class="p-4 bg-white">
+              <div
+                class="d-flex flex-wrap align-items-center justify-content-center gap-2"
+                id="contents"
+              >
+                {{! content }}
+                {{#each data}}
+                  <div
+                    class="card shadow-sm mb-2 rounded d-flex flex-column justify-content-center"
+                    style="max-width: 350px;"
+                  >
+                    <div class="card-body m-2">
+                      <img
+                        class="rounded mb-2"
+                        src="{{this.image}}"
+                        alt=""
+                        width="100%"
+                        style="object-fit: cover; height:450px ; width:300px"
+                      />
+                      <h2 class="card-title fw-semibold">
+                        <a
+                          style="text-decoration: none;color:black"
+                          href="/detail_project/{{this.id}}"
+                          target="_blank"
+                        >
+                          {{this.name}}
+                        </a>
+                      </h2>
                       <p
-                        class="text-break fst-italic text-align-justify text-lowercase"
-                      >{{this.description}} </p>
-                    </blockquote>
-                    <div class="mt-5 d-flex justify-content-start gap-4">
-                      <i class="{{this.Technologies1}}"></i>
-                      <i class="{{this.Technologies2}}"></i>
-                      <i class="{{this.Technologies3}}"></i>
-                      <i class="{{this.Technologies4}}"></i>
-                    </div>
-                    <div class="d-flex justify-content-between gap-2">
-                      <a class="col-6" href="/update_project/{{this.id}}">
-                        <button class="btn btn-primary">
-                          edit
-                        </button>
-                      </a>
-                      <form class="col-6" action="/delete_project/{{this.id}}" method="post">
-                        <button class="btn btn-danger">delete</button>
-                      </form>
+                        class="card-text mb-4"
+                        id="totalMonth"
+                      >{{this.durationTime}}</p>
+                      <blockquote class="blockquote mb-2">
+                        <p
+                          class="text-break fst-italic text-align-justify text-lowercase"
+                        >{{this.description}} </p>
+                      </blockquote>
+                      <div class="mt-5 d-flex justify-content-start gap-4">
+                        <i class="{{this.Technologies1}}"></i>
+                        <i class="{{this.Technologies2}}"></i>
+                        <i class="{{this.Technologies3}}"></i>
+                        <i class="{{this.Technologies4}}"></i>
+                      </div>
+                      <div class="d-flex justify-content-between gap-2">
+                        <a class="col-6" href="/update_project/{{this.id}}">
+                          <button class="btn btn-primary">
+                            edit
+                          </button>
+                        </a>
+                        <form
+                          class="col-6"
+                          action="/delete_project/{{this.id}}"
+                          method="post"
+                        >
+                          <button class="btn btn-danger">delete</button>
+                        </form>
+                      </div>
                     </div>
                   </div>
-                </div>
-              {{/each}}
+                {{/each}}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      {{/if}}
     </main>
 
     <!-- Footer -->
