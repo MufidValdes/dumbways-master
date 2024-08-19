@@ -10,8 +10,8 @@ module.exports = {
   },
   testing: {
     username: "postgres",
-    password: "root",
-    database: "b56personalweb",
+    password: "postgres",
+    database: "personalweb",
     host: "localhost",
     dialect: "postgres",
   },
