@@ -16,11 +16,11 @@ const tb_users = require("./models").users; // Import model users dari file mode
 // ORM (Object Relational Mapping), Teknik penyelarasan antara aplikasi dan database ataupun jembatan, penyederhanaan, pemetaan object ke struktur database
 const { Sequelize, QueryTypes } = require("sequelize");
 // ====Ready To Deploy====
+//config db
+const config = require("./config/config.js"); // Import konfigurasi database
 // Menggunakan dotenv untuk mengakses variabel environment
 require("dotenv").config();
 const port = process.env.PORT || 5000; // Tentukan port aplikasi dari environment atau gunakan 5000
-//config db
-const config = require("./config/config.js"); // Import konfigurasi database
 // Konfigurasi environment berdasarkan mode aplikasi (production/development)
 const envConfig =
   process.env.NODE_ENV === "production"
