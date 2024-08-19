@@ -1,51 +1,60 @@
 // ========== set global variable ==========
 //Import library/module
-const express = require("express");
-const UserSession = require("express-session");
-const app = express();
-const port = 3000;
-const path = require("path");
-const bcrypt = require("bcrypt");
-const multer = require("multer");
+const express = require("express"); // Import Express framework untuk membuat aplikasi web
+const UserSession = require("express-session"); // Import express-session untuk mengelola sesi pengguna
+const app = express(); // Inisialisasi aplikasi Express
+const path = require("path"); // Import modul path untuk memanipulasi path file
+const bcrypt = require("bcrypt"); // Import bcrypt untuk enkripsi password
+const multer = require("multer"); // Import multer untuk upload file
 
+// Konfigurasi multer untuk menyimpan file upload di folder './src/uploads'
 const upload = multer({ dest: "./src/uploads" });
-app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
-const tb_project = require("./models").tb_project;
-const tb_users = require("./models").users;
+app.use("/uploads", express.static(path.join(__dirname, "src/uploads"))); // Middleware untuk menyajikan file statis dari folder uploads
+const tb_project = require("./models").tb_project; // Import model tb_project dari file models
+const tb_users = require("./models").users; // Import model users dari file models
 
-// const flash = require("express-flash");
-
+// ORM (Object Relational Mapping), Teknik penyelarasan antara aplikasi dan database ataupun jembatan, penyederhanaan, pemetaan object ke struktur database
+const { Sequelize, QueryTypes } = require("sequelize");
+// ====Ready To Deploy====
+// Menggunakan dotenv untuk mengakses variabel environment
+require("dotenv").config();
+const port = process.env.PORT || 5000; // Tentukan port aplikasi dari environment atau gunakan 5000
+//config db
+const config = require("./config/config.js"); // Import konfigurasi database
+// Konfigurasi environment berdasarkan mode aplikasi (production/development)
+const envConfig =
+  process.env.NODE_ENV === "production"
+    ? config.production
+    : config.development;
+    
+const sequelize = new Sequelize({ ...envConfig, dialectModule: require("pg") }); // Inisialisasi Sequelize dengan konfigurasi environment dan modul PostgreSQL
 // app.set = setting variable global, configuration, dll
-// use handlebars for template engine
+// Mengatur view engine menggunakan handlebars (hbs) dan menentukan folder views
 app.set("view engine", "hbs");
 app.set("views", "src/views");
 
-// sequelize config
-const config = require("./config/config.json");
-// ORM (Object Relational Mapping), Teknik penyelarasan antara aplikasi dan database ataupun jembatan, penyederhanaan. pemetaan object ke struktur database
-const { Sequelize, QueryTypes } = require("sequelize");
-const sequelize = new Sequelize(config.development);
 
 // app.use = setting middleware
-app.use("/assets", express.static(path.join(__dirname, "src/assets")));
-app.use("/uploads", express.static("uploads"));
+app.use("/assets", express.static(path.join(__dirname, "src/assets"))); // Middleware untuk menyajikan file statis dari folder assets
+app.use("/uploads", express.static("uploads")); // Middleware untuk menyajikan file statis dari folder uploads
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); // Middleware untuk parsing body dari form data
 // extended : false => querystring bawaan dari express
-// extended : true = > menggunakan query strign third party => qs
+// extended : true = > menggunakan query string third party => qs
 
 //  ======= User Session =====
+// Middleware untuk mengelola sesi pengguna
 app.use(
   UserSession({
-    name: "session_data",
-    secret: "secret-room",
-    resave: false,
-    saveUninitialized: true,
+    name: "session_data", // Nama cookie sesi
+    secret: "secret-room", // Secret key untuk mengamankan sesi
+    resave: false, // Tidak menyimpan sesi yang tidak diubah
+    saveUninitialized: true, // Menyimpan sesi baru yang belum diinisialisasi
 
     cookie: {
-      httpOnly: true,
-      secure: false, // https => http
-      maxAge: 1000 * 60 * 60 * 24, // 1 hari
+      httpOnly: true, // Cookie hanya dapat diakses melalui HTTP, tidak dapat diakses oleh JavaScript
+      secure: false, // Jika menggunakan HTTPS, set secure ke true
+      maxAge: 1000 * 60 * 60 * 24, // Masa berlaku cookie selama 1 hari
     },
   })
 );
@@ -54,56 +63,59 @@ app.use(
 // get = mengambil data
 // post = mengirimkan data
 // request = dari client ke server
-// respose = dari server ke client
-app.get("/", home);
-app.get("/contact", contact);
+// response = dari server ke client
+app.get("/", home); // Route untuk halaman utama
+app.get("/contact", contact); // Route untuk halaman kontak
 
-app.get("/login", login);
-app.post("/login", loginbyEmail);
+app.get("/login", login); // Route untuk halaman login
+app.post("/login", loginbyEmail); // Route untuk proses login
 
-app.get("/register", register);
-app.post("/register", registerUser);
+app.get("/register", register); // Route untuk halaman registrasi
+app.post("/register", registerUser); // Route untuk proses registrasi
 
-app.post("/logout", logout);
+app.post("/logout", logout); // Route untuk logout
 
-app.get("/add_project", project);
-app.post("/add_project", upload.single("image"), add_project);
-app.post("/delete_project/:id", del_project);
+app.get("/add_project", project); // Route untuk halaman tambah proyek
+app.post("/add_project", upload.single("image"), add_project); // Route untuk proses tambah proyek
+app.post("/delete_project/:id", del_project); // Route untuk hapus proyek
 
-app.get("/update_project/:id", update_projectView);
-app.post("/update_project", upload.single("image"), update_project);
+app.get("/update_project/:id", update_projectView); // Route untuk halaman update proyek
+app.post("/update_project", upload.single("image"), update_project); // Route untuk proses update proyek
 
-app.get("/detail_project/:id", detail_projectbyId);
-app.get("/detail_project", detail_project);
+app.get("/detail_project/:id", detail_projectbyId); // Route untuk detail proyek berdasarkan ID
+app.get("/detail_project", detail_project); // Route untuk detail proyek
 
-app.get("/testimonial", testimonial);
+app.get("/testimonial", testimonial); // Route untuk halaman testimonial
 
 // ========== SET Function ==========
+// Fungsi untuk menampilkan halaman utama
 async function home(req, res) {
   try {
     // const query = "SELECT * FROM tb_projects ORDER BY id ASC ";
     // const result = await sequelize.query(query, { type: QueryTypes.SELECT });
 
     // console.log("ini data dari tb_projects :", result);
-    const data = await tb_project.findAll();
+    const data = await tb_project.findAll(); // Mengambil semua data proyek dari database
 
-    const isLogin = req.session.isLogin;
-    const user = req.session.user;
+    const isLogin = req.session.isLogin; // Cek status login
+    const user = req.session.user; // Ambil data user dari sesi
 
     res.render("index", {
       data,
       isLogin,
       user,
-    });
+    }); // Render halaman utama dengan data proyek, status login, dan user
   } catch (error) {
-    throw error;
+    throw error; // Jika terjadi error, lemparkan error
   }
 }
 
+// Fungsi untuk menampilkan halaman kontak
 function contact(req, res) {
-  const { isLogin, user } = req.session;
-  res.render("contact", { isLogin, user });
+  const { isLogin, user } = req.session; // Ambil status login dan user dari sesi
+  res.render("contact", { isLogin, user }); // Render halaman kontak dengan status login dan user
 }
+
 // ========== Login & Register ==========
 // # AUTHENTICATION => AUTHORIZATION
 // - proses verifikasi pengguna
@@ -112,284 +124,195 @@ function contact(req, res) {
 // # SESSION
 // - waktu di mulai website ketika user akses website
 
+// Fungsi untuk menampilkan halaman login
 function login(req, res) {
   res.render("login");
 }
 
+// Fungsi untuk proses login berdasarkan email
 async function loginbyEmail(req, res) {
-  const { email, password } = req.body;
-  const query = `SELECT * FROM users WHERE email='${email}'`;
-  const isResult = await sequelize.query(query, { type: QueryTypes.SELECT });
+  const { email, password } = req.body; // Ambil email dan password dari form body
+  const query = `SELECT * FROM users WHERE email='${email}'`; // Query untuk mencari pengguna berdasarkan email
+  const isResult = await sequelize.query(query, { type: QueryTypes.SELECT }); // Eksekusi query
   if (!isResult.length) {
-    console.log("user belum register!");
-    return res.redirect("/login");
+    console.log("user belum register!"); // Jika pengguna tidak ditemukan
+    return res.redirect("/login"); // Redirect ke halaman login
   }
-  bcrypt.compare(password, isResult[0].password, function (err, result) {
+  bcrypt.compare(password, isResult[0].password, function (err, result) { // Bandingkan password dengan hash yang disimpan
     if (!result) {
-      console.log("Password Salah!");
-      return res.redirect("/login");
+      console.log("Password Salah!"); // Jika password salah
+      return res.redirect("/login"); // Redirect ke halaman login
     } else {
-      req.session.isLogin = true;
-      req.session.user = isResult[0].name;
-      req.session.idUser = isResult[0].id;
+      req.session.isLogin = true; // Set status login di sesi
+      req.session.user = isResult[0].name; // Simpan nama pengguna di sesi
+      req.session.idUser = isResult[0].id; // Simpan ID pengguna di sesi
       console.log("Login Berhasil!");
-      return res.redirect("/");
+      return res.redirect("/"); // Redirect ke halaman utama
     }
   });
 }
 
+// Fungsi untuk menampilkan halaman registrasi
 function register(req, res) {
   res.render("register");
 }
-async function registerUser(req, res) {
-  const { name, email, password } = req.body;
 
-  const query = `SELECT * FROM users WHERE email='${email}'`;
-  const isResult = await sequelize.query(query, { type: QueryTypes.SELECT });
+// Fungsi untuk proses registrasi pengguna baru
+async function registerUser(req, res) {
+  const { name, email, password } = req.body; // Ambil data dari form body
+
+  const query = `SELECT * FROM users WHERE email='${email}'`; // Query untuk cek apakah email sudah terdaftar
+  const isResult = await sequelize.query(query, { type: QueryTypes.SELECT }); // Eksekusi query
   if (isResult.length) {
-    console.log("email sudah pernah digunakan!");
-    return res.redirect("/register");
+    console.log("email sudah pernah digunakan!"); // Jika email sudah digunakan
+    return res.redirect("/register"); // Redirect ke halaman registrasi
   }
-  const salt = 10;
-  bcrypt.hash(password, salt, async (err, hashPassword) => {
+  const salt = 10; // Nilai salt untuk bcrypt
+  bcrypt.hash(password, salt, async (err, hashPassword) => { // Hash password menggunakan bcrypt
     if (err) {
-      console.log("Failed to encrypt Password!");
-      return res.redirect("/register");
+      console.log("Failed to encrypt Password!"); // Jika proses hashing gagal
+      return res.redirect("/register"); // Redirect ke halaman registrasi
     } else {
       await sequelize.query(`
           INSERT INTO users (name, email, password, "createdAt", "updatedAt")
-          VALUES ('${name}','${email}','${hashPassword}', NOW() , NOW())`);
+          VALUES ('${name}','${email}','${hashPassword}', NOW() , NOW())`); // Simpan data pengguna baru ke database
       console.log("Hash result :", hashPassword);
       // req.flash("success", "Register success!");
-      return res.redirect("/");
+      return res.redirect("/"); // Redirect ke halaman utama
     }
   });
 }
 
-// Logout
+// Fungsi untuk logout
 async function logout(req, res) {
-  req.session.destroy(function (err) {
-    if (err) return console.error("Logout failed!");
+  req.session.destroy(function (err) { // Hapus sesi pengguna
+    if (err) return console.error("Logout failed!"); // Jika gagal logout
 
     console.log("Logout success!");
-    res.redirect("/");
+    res.redirect("/"); // Redirect ke halaman utama
   });
 }
+
 // ========== CRUD MyProject ==========
+// Fungsi untuk menampilkan halaman tambah proyek
 function project(req, res) {
-  const { isLogin, user } = req.session;
+  const { isLogin, user } = req.session; // Ambil status login dan user dari sesi
   isLogin
-    ? res.render("add_project", { isLogin, user })
-    : res.redirect("/login");
+    ? res.render("add_project", { isLogin, user }) // Jika login, render halaman tambah proyek
+    : res.redirect("/login"); // Jika tidak login, redirect ke halaman login
 }
-// ==> ADD PROJECT <===
+
+// Fungsi untuk menambah proyek baru
 async function add_project(req, res) {
-  try {
-    const image = req.file ? req.file.filename : null;
-    const userId = req.session.idUser;
-    console.log(image);
-    const {
-      name,
-      startDate,
-      endDate,
-      discription,
-      Technologies1,
-      Technologies2,
-      Technologies3,
-      Technologies4,
-    } = req.body;
-    const durationTime = getDurationTime(endDate, startDate);
+  const {
+    project_name,
+    technology,
+    description,
+    repository,
+    deploy_url,
+    start_date,
+    end_date,
+  } = req.body; // Ambil data dari form body
 
-    const tecnologies = [
-      Technologies1,
-      Technologies2,
-      Technologies3,
-      Technologies4,
-    ].filter(Boolean);
-    const query = `
-    INSERT INTO tb_projects(
-      name, 
-      start_date, 
-      end_date, 
-      description, 
-      tecnologies, 
-      image,
-      "user_id",
-      duration_time, 
-      "createdAt", 
-      "updatedAt"
-      ) 
-      VALUES (
-        '${name}',
-        '${startDate}',
-        '${endDate}',
-        '${discription}',
-        ARRAY['${tecnologies}'],
-        '${image}',
-        '${userId}',
-              '${durationTime}',
-              NOW(),
-              NOW())`;
+  const { isLogin, idUser } = req.session; // Ambil status login dan ID pengguna dari sesi
 
-    const result = await sequelize.query(query, { type: QueryTypes.INSERT });
+  if (!isLogin) return res.redirect("/login"); // Jika tidak login, redirect ke halaman login
 
-    console.log("Data berhasil ditambahkan :", result);
-    res.redirect("/");
-  } catch (error) {
-    throw error;
-  }
+  const data = {
+    project_name,
+    technology,
+    description,
+    repository,
+    deploy_url,
+    start_date,
+    end_date,
+    image: req.file.filename, // Simpan nama file gambar yang diupload
+    user_id: idUser, // Simpan ID pengguna yang login
+  };
+
+  await tb_project.create(data); // Simpan data proyek baru ke database
+  res.redirect("/"); // Redirect ke halaman utama
 }
 
-// Duration Time
-function getDurationTime(endDate, startDate) {
-  let durationTime = new Date(endDate) - new Date(startDate);
-
-  let miliSecond = 1000;
-  let secondInDay = 86400;
-  let dayInMonth = 30;
-  let monthInYear = 12;
-
-  let durationTimeInDay = Math.floor(durationTime / (miliSecond * secondInDay));
-  let durationTimeInMonth = Math.floor(
-    durationTime / (miliSecond * secondInDay * dayInMonth)
-  );
-  let durationTimeInYear = Math.floor(
-    durationTime / (miliSecond * secondInDay * dayInMonth * monthInYear)
-  );
-
-  let restOfMonthInYear = Math.floor(
-    (durationTime % (miliSecond * secondInDay * dayInMonth * monthInYear)) /
-      (miliSecond * secondInDay * dayInMonth)
-  );
-
-  if (durationTimeInYear > 0) {
-    if (restOfMonthInYear > 0) {
-      return `${durationTimeInYear} tahun ${restOfMonthInYear} bulan`;
-    } else {
-      return `${durationTimeInYear} tahun`;
-    }
-  } else if (durationTimeInMonth > 0) {
-    return `${durationTimeInMonth} bulan`;
-  } else {
-    return `${durationTimeInDay} hari`;
-  }
-}
-
+// Fungsi untuk menghapus proyek berdasarkan ID
 async function del_project(req, res) {
-  try {
-    const { id } = req.params;
+  const { id } = req.params; // Ambil ID proyek dari parameter URL
+  const { isLogin, user } = req.session; // Ambil status login dan user dari sesi
 
-    const query = `
-    DELETE FROM tb_projects 
-    WHERE id=${id}`;
-    const result = await sequelize.query(query, { type: QueryTypes.DELETE });
+  if (!isLogin) return res.redirect("/login"); // Jika tidak login, redirect ke halaman login
 
-    console.log("data berhasil dihapus :", result[0]);
-    res.redirect("/");
-  } catch (error) {
-    console.log(error);
-  }
+  await tb_project.destroy({ where: { id } }); // Hapus proyek dari database berdasarkan ID
+  res.redirect("/"); // Redirect ke halaman utama
 }
 
+// Fungsi untuk menampilkan halaman update proyek berdasarkan ID
 async function update_projectView(req, res) {
-  try {
-    const { isLogin, user } = req.session;
-    const { id } = req.params;
+  const { id } = req.params; // Ambil ID proyek dari parameter URL
+  const { isLogin, user } = req.session; // Ambil status login dan user dari sesi
 
-    // const query = `SELECT * FROM tb_projects WHERE id=${id}`;
-    // const project = await sequelize.query(query, { type: QueryTypes.SELECT });
+  if (!isLogin) return res.redirect("/login"); // Jika tidak login, redirect ke halaman login
 
-    // console.log("ini update project", project);
-    const data = await tb_project.findOne({
-      where: { id },
-    });
-    isLogin
-    ? res.render("update_project", { data, isLogin, user })
-    : res.redirect("/login");
-  } catch (error) {
-    console.log(error);
-  }
+  const project = await tb_project.findOne({ where: { id } }); // Ambil data proyek dari database berdasarkan ID
+  res.render("update_project", { project, isLogin, user }); // Render halaman update proyek dengan data proyek
 }
+
+// Fungsi untuk update proyek berdasarkan data yang diinput
 async function update_project(req, res) {
-  try {
-    console.log(req.body);
-    const {
-      id,
-      name,
-      startDate,
-      endDate,
-      discription,
-      Technologies1,
-      Technologies2,
-      Technologies3,
-      Technologies4,
-    } = req.body;
-    const durationTime = getDurationTime(endDate, startDate);
+  const {
+    id,
+    project_name,
+    technology,
+    description,
+    repository,
+    deploy_url,
+    start_date,
+    end_date,
+  } = req.body; // Ambil data dari form body
 
-    const tecnologies = [
-      Technologies1,
-      Technologies2,
-      Technologies3,
-      Technologies4,
-    ].filter(Boolean);
-    const image = req.file ? req.file.filename : null;
-    const userId = req.session.idUser;
+  const { isLogin } = req.session; // Ambil status login dari sesi
 
-    const query = `
-          UPDATE tb_projects
-          SET  name = '${name}' ,
-          start_date = '${startDate}', 
-          end_date = '${endDate}', 
-          description = '${discription}',
-          tecnologies= ' ARRAY['${tecnologies}']', 
-          image = '${image}',
-          "user_id" ='${userId}',
-          duration_time ='${durationTime}'
-          WHERE
-          id=${id}`;
-    const result = await sequelize.query(query, { type: QueryTypes.UPDATE });
+  if (!isLogin) return res.redirect("/login"); // Jika tidak login, redirect ke halaman login
 
-    console.log("data berhasil diperbarui", result);
+  const data = {
+    project_name,
+    technology,
+    description,
+    repository,
+    deploy_url,
+    start_date,
+    end_date,
+  };
 
-    res.redirect("/");
-  } catch (error) {
-    console.log(error);
+  if (req.file) {
+    data.image = req.file.filename; // Jika ada file gambar yang diupload, simpan nama file
   }
+
+  await tb_project.update(data, { where: { id } }); // Update data proyek di database berdasarkan ID
+  res.redirect("/"); // Redirect ke halaman utama
 }
 
-function detail_project(req, res) {
-  res.redirect("/");
-}
-
+// Fungsi untuk menampilkan detail proyek berdasarkan ID
 async function detail_projectbyId(req, res) {
-  try {
-    const { id } = req.params;
-    const { isLogin, user } = req.session;
-    // const query = `SELECT * FROM tb_projects WHERE id=${id}`;
-    // const result = await sequelize.query(query, { type: QueryTypes.SELECT });
-
-    const data = await tb_project.findOne({
-      where: { id },
-    });
-
-    isLogin
-    ? res.render("detail_project", {
-      data,
-      isLogin,
-      user,
-    })
-    : res.redirect("/login");
-  } catch (error) {
-    console.log(error);
-  }
+  const { id } = req.params; // Ambil ID proyek dari parameter URL
+  const project = await tb_project.findOne({ where: { id } }); // Ambil data proyek dari database berdasarkan ID
+  const { isLogin, user } = req.session; // Ambil status login dan user dari sesi
+  res.render("detail_project", { project, isLogin, user }); // Render halaman detail proyek dengan data proyek
 }
+
+// Fungsi untuk menampilkan semua detail proyek
+async function detail_project(req, res) {
+  const projects = await tb_project.findAll(); // Ambil semua data proyek dari database
+  const { isLogin, user } = req.session; // Ambil status login dan user dari sesi
+  res.render("detail_project", { projects, isLogin, user }); // Render halaman detail proyek dengan data proyek
+}
+
+// Fungsi untuk menampilkan halaman testimonial
 function testimonial(req, res) {
-  const { isLogin, user } = req.session;
-  res.render("testimonial", { isLogin, user });
+  const { isLogin, user } = req.session; // Ambil status login dan user dari sesi
+  res.render("testimonial", { isLogin, user }); // Render halaman testimonial dengan status login dan user
 }
 
+// Jalankan server pada port yang sudah ditentukan
 app.listen(port, () => {
-  console.log(`Aplikasi berjalan pada port ${port}`);
+  console.log(`Server ready to run on http://localhost:${port}`);
 });
-
-// run => node app.js
