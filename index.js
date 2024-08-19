@@ -1,14 +1,17 @@
 // ========== set global variable ==========
 //Import library/module
 const express = require("express");
+const UserSession = require("express-session");
 const app = express();
 const port = 3000;
 const path = require("path");
 const bcrypt = require("bcrypt");
+const multer = require("multer");
 
+const upload = multer({ dest: "./src/uploads" });
+app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
 const tb_project = require("./models").tb_project;
 const tb_users = require("./models").users;
-const UserSession = require("express-session");
 
 // const flash = require("express-flash");
 
@@ -23,18 +26,13 @@ const config = require("./config/config.json");
 const { Sequelize, QueryTypes } = require("sequelize");
 const sequelize = new Sequelize(config.development);
 
-// MULTER
-const upload = require("./middlewares/uploadFile");
-
 // app.use = setting middleware
 app.use("/assets", express.static(path.join(__dirname, "src/assets")));
-app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
+app.use("/uploads", express.static("uploads"));
 
 app.use(express.urlencoded({ extended: true }));
 // extended : false => querystring bawaan dari express
 // extended : true = > menggunakan query strign third party => qs
-app.use(express.json());
-// app.use(flash());
 
 //  ======= User Session =====
 app.use(
@@ -73,7 +71,7 @@ app.post("/add_project", upload.single("image"), add_project);
 app.post("/delete_project/:id", del_project);
 
 app.get("/update_project/:id", update_projectView);
-app.post("/update_project", update_project);
+app.post("/update_project", upload.single("image"), update_project);
 
 app.get("/detail_project/:id", detail_projectbyId);
 app.get("/detail_project", detail_project);
@@ -103,8 +101,8 @@ async function home(req, res) {
 }
 
 function contact(req, res) {
-  const isLogin = req.session.isLogin;
-  res.render("contact",isLogin);
+  const { isLogin, user } = req.session;
+  res.render("contact", { isLogin, user });
 }
 // ========== Login & Register ==========
 // # AUTHENTICATION => AUTHORIZATION
@@ -153,19 +151,19 @@ async function registerUser(req, res) {
     return res.redirect("/register");
   }
   const salt = 10;
-    bcrypt.hash(password, salt, async (err, hashPassword) => {
-      if (err) {
-        console.log("Failed to encrypt Password!");
-        return res.redirect("/register");
-      } else {
-         await sequelize.query(`
+  bcrypt.hash(password, salt, async (err, hashPassword) => {
+    if (err) {
+      console.log("Failed to encrypt Password!");
+      return res.redirect("/register");
+    } else {
+      await sequelize.query(`
           INSERT INTO users (name, email, password, "createdAt", "updatedAt")
           VALUES ('${name}','${email}','${hashPassword}', NOW() , NOW())`);
-          console.log("Hash result :", hashPassword);
-          // req.flash("success", "Register success!");
-          return res.redirect("/");
-        }
-      });
+      console.log("Hash result :", hashPassword);
+      // req.flash("success", "Register success!");
+      return res.redirect("/");
+    }
+  });
 }
 
 // Logout
@@ -179,14 +177,17 @@ async function logout(req, res) {
 }
 // ========== CRUD MyProject ==========
 function project(req, res) {
-  res.render("add_project");
+  const { isLogin, user } = req.session;
+  isLogin
+    ? res.render("add_project", { isLogin, user })
+    : res.redirect("/login");
 }
 // ==> ADD PROJECT <===
 async function add_project(req, res) {
   try {
-    const image = req.file ? req.file.filename : "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001";
+    const image = req.file ? req.file.filename : null;
     const userId = req.session.idUser;
-    
+    console.log(image);
     const {
       name,
       startDate,
@@ -198,7 +199,7 @@ async function add_project(req, res) {
       Technologies4,
     } = req.body;
     const durationTime = getDurationTime(endDate, startDate);
-     
+
     const tecnologies = [
       Technologies1,
       Technologies2,
@@ -206,26 +207,26 @@ async function add_project(req, res) {
       Technologies4,
     ].filter(Boolean);
     const query = `
-          INSERT INTO tb_projects(
-              name, 
-              start_date, 
-              end_date, 
-              description, 
-              tecnologies, 
-              image,
-              "user_id",
-              duration_time, 
-              "createdAt", 
-              "updatedAt"
-              ) 
-              VALUES (
-              '${name}',
-              '${startDate}',
-              '${endDate}',
-              '${discription}',
-              ARRAY['${tecnologies}'],
-              '${image}',
-              '${userId}',
+    INSERT INTO tb_projects(
+      name, 
+      start_date, 
+      end_date, 
+      description, 
+      tecnologies, 
+      image,
+      "user_id",
+      duration_time, 
+      "createdAt", 
+      "updatedAt"
+      ) 
+      VALUES (
+        '${name}',
+        '${startDate}',
+        '${endDate}',
+        '${discription}',
+        ARRAY['${tecnologies}'],
+        '${image}',
+        '${userId}',
               '${durationTime}',
               NOW(),
               NOW())`;
@@ -235,7 +236,7 @@ async function add_project(req, res) {
     console.log("Data berhasil ditambahkan :", result);
     res.redirect("/");
   } catch (error) {
-    throw error
+    throw error;
   }
 }
 
@@ -279,17 +280,20 @@ async function del_project(req, res) {
     const { id } = req.params;
 
     const query = `
-        DELETE FROM tb_projects 
-        WHERE id=${id}`;
+    DELETE FROM tb_projects 
+    WHERE id=${id}`;
     const result = await sequelize.query(query, { type: QueryTypes.DELETE });
 
     console.log("data berhasil dihapus :", result[0]);
     res.redirect("/");
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function update_projectView(req, res) {
   try {
+    const { isLogin, user } = req.session;
     const { id } = req.params;
 
     // const query = `SELECT * FROM tb_projects WHERE id=${id}`;
@@ -299,15 +303,37 @@ async function update_projectView(req, res) {
     const data = await tb_project.findOne({
       where: { id },
     });
-    res.render("update_project", { data });
-  } catch (error) {}
+    isLogin
+    ? res.render("update_project", { data, isLogin, user })
+    : res.redirect("/login");
+  } catch (error) {
+    console.log(error);
+  }
 }
 async function update_project(req, res) {
   try {
+    console.log(req.body);
+    const {
+      id,
+      name,
+      startDate,
+      endDate,
+      discription,
+      Technologies1,
+      Technologies2,
+      Technologies3,
+      Technologies4,
+    } = req.body;
+    const durationTime = getDurationTime(endDate, startDate);
+
+    const tecnologies = [
+      Technologies1,
+      Technologies2,
+      Technologies3,
+      Technologies4,
+    ].filter(Boolean);
+    const image = req.file ? req.file.filename : null;
     const userId = req.session.idUser;
-    const image =
-      "https://cdnb.artstation.com/p/assets/images/images/078/860/057/small/theo-malheuvre-ekko-beautyshot3.jpg?1723277001";
-    const { id, name, startDate, endDate, discription } = req.body;
 
     const query = `
           UPDATE tb_projects
@@ -315,8 +341,10 @@ async function update_project(req, res) {
           start_date = '${startDate}', 
           end_date = '${endDate}', 
           description = '${discription}',
-          tecnologies= ' ARRAY['${req.body.Technologies1}','${req.body.Technologies2}','${req.body.Technologies3}','${req.body.Technologies4}']', 
-          image = '${image}'
+          tecnologies= ' ARRAY['${tecnologies}']', 
+          image = '${image}',
+          "user_id" ='${userId}',
+          duration_time ='${durationTime}'
           WHERE
           id=${id}`;
     const result = await sequelize.query(query, { type: QueryTypes.UPDATE });
@@ -324,7 +352,9 @@ async function update_project(req, res) {
     console.log("data berhasil diperbarui", result);
 
     res.redirect("/");
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function detail_project(req, res) {
@@ -334,7 +364,7 @@ function detail_project(req, res) {
 async function detail_projectbyId(req, res) {
   try {
     const { id } = req.params;
-
+    const { isLogin, user } = req.session;
     // const query = `SELECT * FROM tb_projects WHERE id=${id}`;
     // const result = await sequelize.query(query, { type: QueryTypes.SELECT });
 
@@ -342,13 +372,20 @@ async function detail_projectbyId(req, res) {
       where: { id },
     });
 
-    res.render("detail_project", { data});
+    isLogin
+    ? res.render("detail_project", {
+      data,
+      isLogin,
+      user,
+    })
+    : res.redirect("/login");
   } catch (error) {
-    throw error;
+    console.log(error);
   }
 }
 function testimonial(req, res) {
-  res.render("testimonial");
+  const { isLogin, user } = req.session;
+  res.render("testimonial", { isLogin, user });
 }
 
 app.listen(port, () => {

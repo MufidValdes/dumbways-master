@@ -24,9 +24,9 @@
   </head>
   {{! ======== Body ======== }}
   <body>
-    {{! ===<!-- Header -->=== }}
+     {{! ===<!-- Header -->=== }}
     <header id="header">
-       <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
           <a class="navbar-brand" href="/">
             <img
@@ -48,27 +48,35 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav w-100 mb-2 mt-2 mb-lg-0">
-               {{#if isLogin}}
+              {{#if isLogin}}
+                <li class="nav-item">
+                  <a class="nav-link" href="./add_project">Add Project</a>
+                </li>
+              {{/if}}
               <li class="nav-item">
-                <a class="nav-link" href="../add_project">Add Project</a>
-              </li>
-                {{/if}}
-              <li class="nav-item">
-                <a class="nav-link" href="../testimonial">My Testimonial</a>
+                <a class="nav-link" href="./testimonial">My Testimonial</a>
               </li>
             </ul>
-              {{#if isLogin}}
-                <h3>Halo, {{user}}</h3> 
-                </li>
-                <form action="/logout" method="POST">
-                <button>Logout</button>
+            {{#if isLogin}}
+              <p
+                class="mt-2 my-2 text-capitalize fst-italic fs-5"
+                style="width: 200px;"
+              >Welcome,<strong>{{user}} </strong> </p>
+              <form class="mx-2 my-2" action="/logout" method="POST">
+                <button
+                  class="btn btn-outline-danger btn-sm btn-lg"
+                >Logout</button>
               </form>
-              {{else}}
-                  <a class="nav-link text-secondary " href="/register">Register</a>
-                  <a class="nav-link text-secondary" href="/login">Login</a>
-              {{/if}}
-                <a class="btn btn-outline-dark btn-sm" style="height: 34px; width: 120px;" href="../contact" role="button">Contact Me</a>
-
+            {{else}}
+              <a class="nav-link text-secondary" href="/register">Register</a>
+              <a class="nav-link text-secondary" href="/login">Login</a>
+            {{/if}}
+            <a
+              class="btn btn-outline-dark btn-sm"
+              style="height: 30px; width: 120px;"
+              href="./contact"
+              role="button"
+            >Contact Me</a>
           </div>
 
         </div>
@@ -80,11 +88,11 @@
       <div class="title text-center mb-4">
         <h1>{{data.id}} | {{data.name}}</h1>
       </div>
-      <div class="container-detail  d-flex">
-        <div class="col-6 p-2 m-auto">
-            <img style="object-fit: cover;" src="{{data.image}}" alt="Image-detail"  />
+      <div class="container-detail d-flex" style="justify-content: center; align-items:center">
+        <div class="p-2 me-3">
+            <img class="img-thumbnail" width="300px" src="/uploads/{{data.image}}" alt="Image-detail"  />
         </div>
-        <div class="col-6 image-detail mb-4">
+        <div class="col-4 image-detail mb-4">
           <div class="duration mb-4">
             <h5 class="duration-title">Duration</h5>
             <p class="duration-date">
